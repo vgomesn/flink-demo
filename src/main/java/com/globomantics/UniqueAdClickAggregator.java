@@ -5,15 +5,18 @@ import org.apache.flink.api.common.serialization.SimpleStringEncoder;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.connector.file.sink.FileSink;
-import org.apache.flink.connector.file.sink.OnCheckpointRollingPolicy;
+//import org.apache.flink.connector.file.sink.OnCheckpointRollingPolicy;
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
-import org.apache.flink.streaming.api.windowing.time.Time;
+//import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
+
+//import org.apache.flink.api.common.time.Time;
+import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.OnCheckpointRollingPolicy;
 
 import java.time.Duration;
 
@@ -42,7 +45,8 @@ public class UniqueAdClickAggregator {
     // ---- Sliding window 1m size, 10s slide ----
     DataStream<Tuple2<String, Long>> perAdCounts = unique
         .keyBy(ClickEvent::getAdId)
-        .window(SlidingEventTimeWindows.of(Time.minutes(1), Time.seconds(10)))
+        //.window(SlidingEventTimeWindows.of(Time.minutes(1), Time.seconds(10)))
+        .window(SlidingEventTimeWindows.of(Duration.ofMinutes(1), Duration.ofSeconds(10)))
         .process(new ProcessWindowFunction<ClickEvent, Tuple2<String,Long>, String, TimeWindow>() {
           @Override
           public void process(String adId, Context ctx, Iterable<ClickEvent> it,

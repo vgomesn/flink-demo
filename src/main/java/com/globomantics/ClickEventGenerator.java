@@ -1,11 +1,17 @@
 package com.globomantics;
 
-import org.apache.flink.streaming.api.functions.source.ParallelSourceFunction;
+//import org.apache.flink.streaming.api.functions.source.ParallelSourceFunction;
+// New
+import org.apache.flink.streaming.api.functions.source.legacy.RichParallelSourceFunction;
+import org.apache.flink.streaming.api.functions.source.legacy.SourceFunction;
+import org.apache.flink.streaming.api.functions.source.legacy.SourceFunction.SourceContext;
 
 import java.util.Random;
 
 /** Synthetic stream source: emits ClickEvent with duplicates + out-of-order timestamps. */
-public class ClickEventGenerator implements ParallelSourceFunction<ClickEvent> {
+//public class ClickEventGenerator implements ParallelSourceFunction<ClickEvent> {
+public class ClickEventGenerator extends RichParallelSourceFunction<ClickEvent> {
+
   private volatile boolean running = true;
 
   @Override

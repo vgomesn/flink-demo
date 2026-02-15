@@ -1,0 +1,4 @@
+/workspaces/flink-demo/src/main/java/com/globomantics/ClickEvent.java
+/workspaces/flink-demo/src/main/java/com/globomantics/ClickEventGenerator.java
+/workspaces/flink-demo/src/main/java/com/globomantics/UniqueAdClickAggregator.java
+/workspaces/flink-demo/src/main/java/com/globomantics/UniqueUserDeduplicator.java
