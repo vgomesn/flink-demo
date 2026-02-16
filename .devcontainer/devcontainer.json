@@ -13,7 +13,7 @@
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
 			"installMaven": "true",
-			"version": "latest"
+			"version": "17"
 		}
 	},
 	"forwardPorts": [8081],
