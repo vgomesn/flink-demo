@@ -3,47 +3,14 @@ image: gitpod/workspace-java-17
 tasks:
   - name: Bootstrap / Flink
     before: |
-      set -euo pipefail
-
       chmod +x ./install_flink.sh
       ./install_flink.sh
-
-      FLINK_HOME="/workspaces/flink-demo/flink-2.0.0"
-      CONF_FILE="$FLINK_HOME/conf/flink-conf.yaml"
-
-      # Ensure PATH includes flink bin
-      export PATH="$PATH:/bin:/usr/bin:/opt/bin:$FLINK_HOME/bin"
-
-      # Ensure REST/Web UI binds to all interfaces (idempotent: remove then append)
-      sed -i \
-        -e '/^\s*rest\.bind-address\s*:/d' \
-        -e '/^\s*rest\.address\s*:/d' \
-        -e '/^\s*rest\.bind-port\s*:/d' \
-        "$CONF_FILE"
-
-      cat >> "$CONF_FILE" <<'EOF'
-
-# --- Added by .gitpod.yml bootstrap (ensure UI reachable via forwarded port) ---
-rest.bind-address: 0.0.0.0
-rest.address: 0.0.0.0
-rest.bind-port: 8081
-EOF
-
-      # Start Flink cluster
-      stop-cluster.sh || true
+      export PATH="$PATH:/workspaces/flink-demo/flink-2.0.0/bin"
       start-cluster.sh
-
-      # Start extra taskmanagers (optional; keep if you want 3)
-      taskmanager.sh start
-      taskmanager.sh start
-      taskmanager.sh start
-
-  - name: Flink UI
-    command: gp preview http://localhost:8081
+      gitpod environment port open 8081 --name flink-ui --dont-wait || true
 
   - name: Build & Submit Job
     command: |
-      set -euo pipefail
       export PATH="$PATH:/workspaces/flink-demo/flink-2.0.0/bin"
       mvn -q -DskipTests clean package
       flink run -c com.globomantics.UniqueAdClickAggregator target/flink-unique-clicks-1.0.0-shaded.jar out
@@ -55,8 +22,7 @@ EOF
 
 ports:
   - port: 8081
-    onOpen: open-preview
-    visibility: public
+    onOpen: ignore
 
 vscode:
   extensions:
