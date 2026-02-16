@@ -1,0 +1,38 @@
+image: gitpod/workspace-java-17
+
+tasks:
+  - name: Bootstrap / Flink
+    before: |
+      chmod +x ./install_flink.sh
+      ./install_flink.sh
+      export PATH=$PATH:/bin:/usr/bin:/opt/bin:/workspaces/flink-demo/flink-2.0.0/bin
+      start-cluster.sh
+      taskmanager.sh start
+      taskmanager.sh start
+      taskmanager.sh start
+      exit
+
+  - name: Flink UI
+    command: gp preview http://localhost:8081 && exit
+
+  - name: Build & Submit Job
+    command: |
+      export PATH="$PATH:/workspaces/flink-demo/flink-2.0.0/bin"
+      mvn -q -DskipTests clean package
+      flink run -c com.globomantics.UniqueAdClickAggregator target/flink-unique-clicks-1.0.0-shaded.jar out
+
+  - name: Tail Results
+    command: |
+      echo "Tailing files in ./out (finalized on checkpoints)..."
+      bash -lc 'mkdir -p out && tail -F out/* 2>/dev/null || true'
+
+ports:
+  - port: 8081
+    onOpen: open-preview
+    visibility: public
+
+vscode:
+  extensions:
+    - vscjava.vscode-java-pack
+
+workspaceLocation: /workspaces/flink-demo
